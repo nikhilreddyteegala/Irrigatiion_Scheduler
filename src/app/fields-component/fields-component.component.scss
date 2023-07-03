@@ -1,0 +1,51 @@
+.row {
+    display:inline-block;
+}
+.d-none {
+    display: none;
+}
+
+.container::after {
+  background-color: #cf9393;
+  overflow: auto;
+}
+
+.dropdown-style {
+    // width: 150px;
+    height: 30px;
+    font-size: 16px;
+    background-color: #f0f0f0;
+    border: 1px solid rgb(20, 11, 11);
+    border-radius:8px;
+    margin-left: 2px;
+    margin-bottom: 2px;
+    
+    
+  }
+.left-space {
+  margin-left: 70px;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+}
+  .button-style {
+    width: 150px;
+    height: 50px;
+    font-size: 18px;
+    background-color: #7b94e6;
+    border: 1px solid rgb(20, 11, 11);
+    border-radius:10px;
+    margin-left: 400px;
+    margin-bottom: 8px;
+    
+    
+  }
+  .background-image {
+    // background-image: url("C:\Users\Nikhil Reddy\Desktop\Nikhil-Project\Irrigation\src\app\fields-component\images\Water_Irrigation.jpg");
+    // background-color: rgb(144, 252, 252);
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+}

@@ -1,0 +1,876 @@
+
+<div class="background-image container" style="margin-left: 10px; background-color: rgb(236, 228, 197); overflow: auto;" >
+    <div><br>
+   <font [size]="3"> <b>Name:</b></font>
+    <input class="dropdown-style" type="text" [(ngModel)]="name" disabled>
+</div><br>
+<!-- <div>
+    <label for="dateInput">Date (MM-DD-YYYY):</label>
+    <input id="dateInput" type="text" formControlName="date">
+    <div *ngIf="dateForm.get('date')?.errors?.['pattern']">Invalid date format. Please use MM-DD-YYYY.</div>
+  </div> -->
+  
+<div> 
+    <font [size]="3"> <b>CIMIS:</b></font>
+    <select class="custom-select dropdown-style" [(ngModel)]="selectedStation" required #stationcontrol="ngModel">
+        <option value=null [disabled]=true > Select Station </option>
+        <option *ngFor="let Station of Stations">
+            {{Station}}
+        </option>
+    </select> 
+    <div *ngIf="displayerrormsgs == 0"><h5>Please select station</h5></div>
+    <div *ngIf="stationcontrol.errors?.['required'] && displayerrormsgs == 1" class="error-message">Please select station</div> 
+</div><br>
+
+<div>
+    <font [size]="3"> <b>Crop Type:</b></font>
+    <select class="custom-select dropdown-style" [(ngModel)]="selectedCropType" disabled>
+        <option value=null [disabled]=true > Select </option>
+        <option *ngFor="let cropType of cropTypes">
+            {{cropType}}
+        </option>
+    </select>  
+</div><br>
+
+
+<div *ngIf="(selectedCropType === 'Vegetable and Field Crop')">
+    <font [size]="3"> <b>Crop:</b></font>
+<select  class="custom-select dropdown-style " [(ngModel)]="selectedCrop" (change)="cropClick(selectedCrop)" disabled>
+    <option value=null [disabled]="true" [selected]="true"> Select</option>
+    <option *ngFor="let vegetableCrop of vegetableCrops">
+        {{vegetableCrop}}
+    </option>
+</select>
+</div>
+
+<div *ngIf="(selectedCropType === 'Tree Crop')">
+    <font [size]="3"> <b>Crop:</b></font>
+<select  class="custom-select dropdown-style " [(ngModel)]="selectedCrop" (change)="cropClick(selectedCrop)" disabled>
+    <option value=null [disabled]="true" [selected]="true"> Select</option>
+    <option *ngFor="let treeCrop of treeCrops">
+        {{treeCrop}}
+    </option>
+</select>
+</div><br>
+
+<div *ngIf="(selectedCropType === 'Vegetable and Field Crop')">
+    <div><font [size]="3"> <b>Crop Calendar:</b></font></div>
+    
+     <table>
+        <th>Planting Date</th>
+        <th>Start Of Rapid Growth</th>
+        <th>Start Of Season</th>
+        <th>End Of Mid Season</th>
+        <th>End Of Season</th>
+        <th>Help</th>
+    <tr>
+   <td> <input  class="dropdown-style form-control" type="date" [(ngModel)]="plannedDate" (change)="onplannedDate()" [min]="getCurrentDate()"></td>
+   <td> <input  class="dropdown-style" type="date" [(ngModel)]="StartOfRapidGrowth" [min]="getCurrentDate()"></td>
+   <td> <input  class="dropdown-style" type="date" [(ngModel)]="StartOfMidSeason" [min]="getCurrentDate()"></td>
+   <td> <input  class="dropdown-style" type="date" [(ngModel)]="BeginingOfSeason" [min]="getCurrentDate()"></td>
+   <td> <input  class="dropdown-style" type="date" [(ngModel)]="EndOfSeason" (change)="onplannedDate()" [min]="getCurrentDate()"></td>
+   <td><button mat-button (click)="openDialog('Vegetable and Field Crop')"><mat-icon>help</mat-icon></button></td>
+</tr>
+</table>
+</div>
+
+
+<div *ngIf="(selectedCropType === 'Tree Crop')">
+    <div ><font [size]="3"> <b>Crop Calender:</b></font></div>
+    <div>
+        <font [size]="3"> <b>Do you want use standard crop calendar or your own calendar and kcb ? :</b></font>
+        <select class="custom-select dropdown-style" [(ngModel)]="selectedWhichKcb">
+            <option value=null [disabled]=true> Select </option>
+            <option *ngFor="let whichKcb of whichKcbs" [value]= "whichKcb.value">
+                {{whichKcb.label}}
+            </option>
+        </select>
+    </div><div *ngIf="(selectedWhichKcb == 1)">    
+        
+    <table>   
+        <th>Leaf Out:</th>
+        <th>Start Of Mid Season:</th>
+        <th>End Of Mid Season</th>
+        <th>End Of Season</th>
+        <th>Help</th>
+    <tr>
+   <td> <input style="margin-left:70px;" class="dropdown-style" type="date" [(ngModel)]="plannedDate" (change)="onplannedDate()" [min]="getCurrentDate()"></td>
+    <td><input style="margin-left:40px;" class="dropdown-style" type="date" [(ngModel)]="StartOfMidSeason" [min]="getCurrentDate()"></td>
+    <td><input style="margin-left:40px;" class="dropdown-style" type="date" [(ngModel)]="BeginingOfSeason" [min]="getCurrentDate()"></td>
+    <td><input style="margin-left:40px;" class="dropdown-style" type="date" [(ngModel)]="EndOfSeason" (change)="onplannedDate()" [min]="getCurrentDate()"></td>
+    <td><button mat-button (click)="openDialog('Tree Crop')"><mat-icon>help</mat-icon></button></td>
+    </tr>
+</table>
+
+</div>
+</div>
+
+
+
+<div *ngIf="(selectedWhichKcb == 2)">
+    <font [size]="3"> <b>Select No of periods during the season:</b></font>
+    <select class="custom-select dropdown-style" [(ngModel)]="selectedKcbPeriod">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let kcbPeriod of kcbPeriods">
+            {{kcbPeriod}}
+        </option>
+    </select>
+</div>
+
+<div *ngIf="(selectedKcbPeriod > 1 || selectedKcbPeriod == 1)">
+    <table>
+    <th>From</th>
+    <th>To</th>
+    <th>Crop Coefficient</th>
+    <tr *ngIf="(selectedKcbPeriod > 1 || selectedKcbPeriod == 1)">
+      <td><input  class="dropdown-style" type="date" [(ngModel)]="plannedDate"></td>
+      <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo1"></td>
+      <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb1">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let kcb of Kcbs">
+            {{kcb}}
+        </option>
+    </select></td> </tr>
+    <tr *ngIf="(selectedKcbPeriod > 2 || selectedKcbPeriod == 2)">
+    <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodFrom2"></td>
+      <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo2"></td>
+      <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb2">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let kcb of Kcbs">
+            {{kcb}}
+        </option>
+    </select></td>
+    </tr>
+    <tr *ngIf="(selectedKcbPeriod > 3 || selectedKcbPeriod == 3)" >
+    
+        <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodFrom3"></td>
+          <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo3"></td>
+          <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb3">
+            <option value=null [disabled]=true> Select </option>
+            <option *ngFor="let kcb of Kcbs">
+                {{kcb}}
+            </option>
+        </select></td>
+    </tr>
+    <tr *ngIf="(selectedKcbPeriod > 4 || selectedKcbPeriod == 4)">
+        <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodFrom4"></td>
+          <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo4"></td>
+          <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb4">
+            <option value=null [disabled]=true> Select </option>
+            <option *ngFor="let kcb of Kcbs">
+                {{kcb}}
+            </option>
+        </select></td>
+    </tr>
+    <tr *ngIf="(selectedKcbPeriod > 5 || selectedKcbPeriod == 5)">
+        <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodFrom5"></td>
+          <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo5"></td>
+          <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb5">
+            <option value=null [disabled]=true> Select </option>
+            <option *ngFor="let kcb of Kcbs">
+                {{kcb}}
+            </option>
+        </select></td>
+    </tr>
+    <tr *ngIf="(selectedKcbPeriod > 6 || selectedKcbPeriod == 6)">
+        <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodFrom6"></td>
+          <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo6"></td>
+          <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb6">
+            <option value=null [disabled]=true> Select </option>
+            <option *ngFor="let kcb of Kcbs">
+                {{kcb}}
+            </option>
+        </select></td>
+    </tr>
+    <tr *ngIf="(selectedKcbPeriod > 7 || selectedKcbPeriod == 7)">
+        <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodFrom7"></td>
+          <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo7"></td>
+          <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb7">
+            <option value=null [disabled]=true> Select </option>
+            <option *ngFor="let kcb of Kcbs">
+                {{kcb}}
+            </option>
+        </select></td>
+    </tr>
+    <tr *ngIf="(selectedKcbPeriod > 8 || selectedKcbPeriod == 8)">
+        <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodFrom8"></td>
+        <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo8"></td>
+        <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb8">
+          <option value=null [disabled]=true> Select </option>
+          <option *ngFor="let kcb of Kcbs">
+              {{kcb}}
+          </option>
+      </select></td> </tr>
+      <tr *ngIf="(selectedKcbPeriod > 9 || selectedKcbPeriod == 9)">
+      <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodFrom9"></td>
+        <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo9"></td>
+        <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb9">
+          <option value=null [disabled]=true> Select </option>
+          <option *ngFor="let kcb of Kcbs">
+              {{kcb}}
+          </option>
+      </select></td>
+      </tr>
+      <tr *ngIf="(selectedKcbPeriod > 10 || selectedKcbPeriod == 10)" >
+      
+          <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodFrom10"></td>
+            <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo10"></td>
+            <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb10">
+              <option value=null [disabled]=true> Select </option>
+              <option *ngFor="let kcb of Kcbs">
+                  {{kcb}}
+              </option>
+          </select></td>
+      </tr>
+      <tr *ngIf="(selectedKcbPeriod > 11 || selectedKcbPeriod == 11)">
+          <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodFrom11"></td>
+            <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo11"></td>
+            <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb11">
+              <option value=null [disabled]=true> Select </option>
+              <option *ngFor="let kcb of Kcbs">
+                  {{kcb}}
+              </option>
+          </select></td>
+      </tr>
+      <tr *ngIf="(selectedKcbPeriod > 12 || selectedKcbPeriod == 12)">
+          <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodFrom12"></td>
+            <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo12"></td>
+            <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb12">
+              <option value=null [disabled]=true> Select </option>
+              <option *ngFor="let kcb of Kcbs">
+                  {{kcb}}
+              </option>
+          </select></td>
+      </tr>
+      <tr *ngIf="(selectedKcbPeriod > 13 || selectedKcbPeriod == 13)">
+          <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodFrom13"></td>
+            <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo13"></td>
+            <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb13">
+              <option value=null [disabled]=true> Select </option>
+              <option *ngFor="let kcb of Kcbs">
+                  {{kcb}}
+              </option>
+          </select></td>
+      </tr>
+      <tr *ngIf="(selectedKcbPeriod > 14 || selectedKcbPeriod == 14)">
+          <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodFrom14"></td>
+            <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo14"></td>
+            <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb14">
+              <option value=null [disabled]=true> Select </option>
+              <option *ngFor="let kcb of Kcbs">
+                  {{kcb}}
+              </option>
+          </select></td>
+      </tr>
+      <tr *ngIf="(selectedKcbPeriod > 15 || selectedKcbPeriod == 15)">
+        <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodFrom15"></td>
+        <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo15"></td>
+        <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb15">
+          <option value=null [disabled]=true> Select </option>
+          <option *ngFor="let kcb of Kcbs">
+              {{kcb}}
+          </option>
+      </select></td> </tr>
+      <tr *ngIf="(selectedKcbPeriod > 16 || selectedKcbPeriod == 16)">
+      <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodFrom16"></td>
+        <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo16"></td>
+        <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb16">
+          <option value=null [disabled]=true> Select </option>
+          <option *ngFor="let kcb of Kcbs">
+              {{kcb}}
+          </option>
+      </select></td>
+      </tr>
+      <tr *ngIf="(selectedKcbPeriod > 17 || selectedKcbPeriod == 17)" >
+      
+          <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodFrom17"></td>
+            <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo17"></td>
+            <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb17">
+              <option value=null [disabled]=true> Select </option>
+              <option *ngFor="let kcb of Kcbs">
+                  {{kcb}}
+              </option>
+          </select></td>
+      </tr>
+      <tr *ngIf="(selectedKcbPeriod > 18 || selectedKcbPeriod == 18)">
+          <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodFrom18"></td>
+            <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo18"></td>
+            <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb18">
+              <option value=null [disabled]=true> Select </option>
+              <option *ngFor="let kcb of Kcbs">
+                  {{kcb}}
+              </option>
+          </select></td>
+      </tr>
+      <tr *ngIf="(selectedKcbPeriod > 19 || selectedKcbPeriod == 19)">
+          <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodFrom19"></td>
+            <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo19"></td>
+            <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb19">
+              <option value=null [disabled]=true> Select </option>
+              <option *ngFor="let kcb of Kcbs">
+                  {{kcb}}
+              </option>
+          </select></td>
+      </tr>
+      <tr *ngIf="(selectedKcbPeriod > 20 || selectedKcbPeriod == 20)">
+          <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodFrom20"></td>
+            <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo20"></td>
+            <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb20">
+              <option value=null [disabled]=true> Select </option>
+              <option *ngFor="let kcb of Kcbs">
+                  {{kcb}}
+              </option>
+          </select></td>
+      </tr>
+      <tr *ngIf="(selectedKcbPeriod > 21 || selectedKcbPeriod == 21)">
+          <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodFrom21"></td>
+            <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo21"></td>
+            <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb21">
+              <option value=null [disabled]=true> Select </option>
+              <option *ngFor="let kcb of Kcbs">
+                  {{kcb}}
+              </option>
+          </select></td>
+      </tr>
+      <tr *ngIf="(selectedKcbPeriod > 22 || selectedKcbPeriod == 22)">
+        <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodFrom22"></td>
+          <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo22"></td>
+          <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb22">
+            <option value=null [disabled]=true> Select </option>
+            <option *ngFor="let kcb of Kcbs">
+                {{kcb}}
+            </option>
+        </select></td>
+    </tr>
+    <tr *ngIf="(selectedKcbPeriod > 23 || selectedKcbPeriod == 23)">
+        <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodFrom23"></td>
+          <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo23"></td>
+          <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb23">
+            <option value=null [disabled]=true> Select </option>
+            <option *ngFor="let kcb of Kcbs">
+                {{kcb}}
+            </option>
+        </select></td>
+    </tr>
+    <tr *ngIf="(selectedKcbPeriod > 24 || selectedKcbPeriod == 24)">
+        <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodFrom24"></td>
+          <td><input  class="dropdown-style" type="date" [(ngModel)]="selectedKcbPeriodTo24"></td>
+          <td><select class="custom-select dropdown-style" [(ngModel)]="selectedKcb24">
+            <option value=null [disabled]=true> Select </option>
+            <option *ngFor="let kcb of Kcbs">
+                {{kcb}}
+            </option>
+        </select></td>
+    </tr>
+  </table> 
+</div>
+
+
+<br *ngIf="(selectedCropType === 'Tree Crop' || selectedCropType === 'Vegetable and Field Crop')">
+<div *ngIf="(selectedCropType === 'Tree Crop' || selectedCropType === 'Vegetable and Field Crop')">
+    <div><font [size]="3"> <b>Crop Data:</b></font></div>
+    <table>
+        <th>Initial Kcb</th>
+        <th>Maximum Kcb</th>
+        <th>End Kcb</th>
+        <th>Initial Crop Height</th>
+        <th>Maximum Crop Height</th>
+        <th>Initial Root Depth</th>
+        <th>Maximum Root Depth</th>
+        <th>Help</th>
+        <tr><td>
+    <select class="custom-select dropdown-style" [(ngModel)]="InitialKcb" style="width: 100px;">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let Kcb of Kcbs">
+            {{Kcb}}
+        </option>
+    </select></td>
+    <td>
+    <select class="custom-select dropdown-style" [(ngModel)]="MaximumKcb"  style="width: 100px;">
+        
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let Kcb of Kcbs">
+            {{Kcb}}
+        </option>
+    </select></td>
+    <td>
+    <select class="custom-select dropdown-style" [(ngModel)]="EndKcb" style="width: 100px;">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let Kcb of Kcbs">
+            {{Kcb}}
+        </option>
+    </select></td>
+    <td *ngIf="(selectedCropType === 'Vegetable and Field Crop')">
+    <select *ngIf="(selectedCropType === 'Vegetable and Field Crop')" class="custom-select dropdown-style" [(ngModel)]="SelectedInitialCropHeight" style="width: 150px;">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let InitialCropHeightOfVegetable of InitialCropHeightVegetables">
+            {{InitialCropHeightOfVegetable}}
+        </option>
+    </select></td>
+    <td *ngIf="(selectedCropType === 'Vegetable and Field Crop')">
+    <select *ngIf="(selectedCropType === 'Vegetable and Field Crop')" class="custom-select dropdown-style" [(ngModel)]="SelectedMaximumCropHeight" style="width: 150px;">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let MaximumCropHeightOfVegetable of MaximumCropHeightVegetables">
+            {{MaximumCropHeightOfVegetable}}
+        </option>
+    </select></td>
+    <td *ngIf="(selectedCropType === 'Tree Crop')">
+    <select *ngIf="(selectedCropType === 'Tree Crop')" class="custom-select dropdown-style" [(ngModel)]="SelectedInitialCropHeight" style="width: 150px;">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let InitialCropHeightOfTree of InitialCropHeightTrees">
+            {{InitialCropHeightOfTree}}
+        </option>
+    </select></td>
+    <td *ngIf="(selectedCropType === 'Tree Crop')">
+    <select *ngIf="(selectedCropType === 'Tree Crop')" class="custom-select dropdown-style" [(ngModel)]="SelectedMaximumCropHeight" style="width: 150px;">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let MaximumCropHeightOfTree of MaximumCropHeightTrees">
+            {{MaximumCropHeightOfTree}}
+        </option>
+    </select></td>
+    <td *ngIf="(selectedCropType === 'Vegetable and Field Crop')" >
+    <select *ngIf="(selectedCropType === 'Vegetable and Field Crop')" class="custom-select dropdown-style" [(ngModel)]="SelectedInitialRootDepth" style="width: 150px;">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let InitialRootDepthOfVegetable of InitialRootDepthOfVegetables">
+            {{InitialRootDepthOfVegetable}}
+        </option>
+    </select></td>
+    <td *ngIf="(selectedCropType === 'Vegetable and Field Crop')" >
+    <select *ngIf="(selectedCropType === 'Vegetable and Field Crop')" class="custom-select dropdown-style" [(ngModel)]="SelectedMaximumRootDepth" style="width: 150px;">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let MaximumRootDepthOfVegetable of MaximumRootDepthOfVegetables">
+            {{MaximumRootDepthOfVegetable}}
+        </option>
+    </select></td>
+    <td *ngIf="(selectedCropType === 'Tree Crop')">
+    <select *ngIf="(selectedCropType === 'Tree Crop')" class="custom-select dropdown-style" [(ngModel)]="SelectedInitialRootDepth" style="width: 150px;">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let InitialRootDepthOfTree of InitialRootDepthOfTrees">
+            {{InitialRootDepthOfTree}}
+        </option>
+    </select></td>
+    <td *ngIf="(selectedCropType === 'Tree Crop')">
+    <select *ngIf="(selectedCropType === 'Tree Crop')" class="custom-select dropdown-style" [(ngModel)]="SelectedMaximumRootDepth" style="width: 150px;">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let MaximumRootDepthOfTree of MaximumRootDepthOfTrees">
+            {{MaximumRootDepthOfTree}}
+        </option>
+    </select></td>
+    <td><button mat-button (click)="openDialog('Crop Data')"><mat-icon>help</mat-icon></button></td>
+</tr>
+</table> 
+    
+</div><br  *ngIf="(selectedCropType === 'Tree Crop' || selectedCropType === 'Vegetable and Field Crop')">
+
+
+<div>
+    <font [size]="3"> <b>Select No of Soil Layers:</b></font>
+    
+    <select class="custom-select dropdown-style" [(ngModel)]="SelectedLayer" (change)="UpdateLayers(SelectedLayer)" required #layercontrol="ngModel">
+    <option value=null [disabled]=true> Select  </option>
+        <option *ngFor="let Layer of Layers">
+            {{Layer}}
+        </option>
+    </select>
+    <div *ngIf="displayerrormsgs == 0"><h5>Please select number of soil layers</h5></div>
+    <div *ngIf="layercontrol.errors?.['required'] && displayerrormsgs == 1" class="error-message">Please select number of soil layers</div>
+</div><br>
+
+<div>
+    <table *ngIf="(LayerUpdate >= 1)">
+        <th>Layer</th>
+        <th>Soil Type</th>
+        <th *ngIf="LayerUpdate != 1">Layer Depth</th>
+        <th>field Capacity</th>
+        <th>Wilting Point</th>
+        <th>Initial Soil water Deficit</th>
+        <th>REW,mm</th>
+        <th>TEW,mm</th>
+        <th>Help</th>
+    
+<tr *ngIf="LayerUpdate >= 1">
+   <td>1</td>
+   <!-- <div><font [size]="2"> <b>Select Values for No of Layers you have selected:</b></font></div> -->
+   <td><select class="custom-select dropdown-style" [(ngModel)]="SelectedSoilType1" (change)="soilType(SelectedSoilType1)" style="width: 120px;">
+    <option value=null [disabled]=true> Select </option>
+    <option *ngFor="let SoilType of SoilTypes" [value]="SoilType.value">
+        {{SoilType.label}}
+    </option>
+    
+</select></td>
+   <td *ngIf="LayerUpdate != 1"> <select *ngIf="LayerUpdate != 1" class="custom-select dropdown-style" [(ngModel)]="SelectedDepth1" style="width: 120px;">
+        <option value=null [disabled]="true">Select</option>
+        <option *ngFor="let Depth of Depths">
+            {{Depth}}
+        </option>
+    </select></td>
+   <td> <select class="custom-select dropdown-style" [(ngModel)]="SelectedSoilWateratfieldCapacity1" style="width: 120px;">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let SoilWateratfieldCapacity of SoilWateratfieldCapacitys" [value]="SoilWateratfieldCapacity.value">
+            {{SoilWateratfieldCapacity.label}}
+        </option>
+    </select></td>
+   <td> <select class="custom-select dropdown-style" [(ngModel)]="SelectedPermentWiltingPoint1" style="width: 120px;" >
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let PermentWiltingPoint of PermentWiltingPoints" [value]="PermentWiltingPoint.value">
+            {{PermentWiltingPoint.label}}
+        </option>
+    </select></td>
+   <td> <select class="custom-select dropdown-style"  [(ngModel)]="SelectedInitialSoilwaterDeficit1" style="width: 180px;">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let InitialSoilwaterDeficit of InitialSoilwaterDeficits">
+            {{InitialSoilwaterDeficit}}
+        </option>
+    </select></td>
+  <td>  <select  class ="custom-select dropdown-style" [(ngModel)]="SelectedREW" style="width: 80px;">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let REW of REWs">
+            {{REW}}
+        </option>
+    </select> </td>
+   <td> <select  class ="custom-select dropdown-style" [(ngModel)]="SelectedTEW" style="width: 80px;">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let TEW of TEWs">
+            {{TEW}}
+        </option>
+    </select> </td>
+    <td><button mat-button (click)="openDialog('Soil Type')"><mat-icon>help</mat-icon></button></td>
+</tr>
+<tr *ngIf="LayerUpdate >= 2">
+    <td>2</td>
+    <td> <select class="custom-select dropdown-style" [(ngModel)]="SelectedSoilType2" style="width: 120px;" (change)="soilType2(SelectedSoilType2)">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let SoilType of SoilTypes" [value]="SoilType.value">
+            {{SoilType.label}}
+        </option></select></td>
+  <td>  <select class="custom-select dropdown-style" [(ngModel)]="SelectedDepth2" style="width: 120px;">
+        <option value=null [disabled]="true">Select</option>
+        <option *ngFor="let Depth of Depths">
+            {{Depth}}
+        </option>
+    </select></td>
+  <td> <select class="custom-select dropdown-style" [(ngModel)]="SelectedSoilWateratfieldCapacity2" style="width: 120px;">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let SoilWateratfieldCapacity of SoilWateratfieldCapacitys" [value]="SoilWateratfieldCapacity.value">
+            {{SoilWateratfieldCapacity.label}}
+        </option>
+    </select></td>
+   <td> <select class="custom-select dropdown-style" [(ngModel)]="SelectedPermentWiltingPoint2" style="width: 120px;">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let PermentWiltingPoint of PermentWiltingPoints" [value]="PermentWiltingPoint.value">
+            {{PermentWiltingPoint.label}}
+        </option>
+    </select></td>
+   <td> <select class="custom-select dropdown-style"  [(ngModel)]="SelectedInitialSoilwaterDeficit2" style="width: 180px;">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let InitialSoilwaterDeficit of InitialSoilwaterDeficits">
+            {{InitialSoilwaterDeficit}}
+        </option>
+    </select></td>
+</tr>
+<tr *ngIf="LayerUpdate >= 3">
+    <td>3</td>
+   <td> <select class="custom-select dropdown-style" [(ngModel)]="SelectedSoilType3" style="width: 120px;" (change)="soilType3(SelectedSoilType3)">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let SoilType of SoilTypes" [value]="SoilType.value">
+            {{SoilType.label}}
+        </option></select></td>
+        <td>  <select class="custom-select dropdown-style" [(ngModel)]="SelectedDepth3" style="width: 120px;">
+        <option value=null [disabled]="true">Select</option>
+        <option *ngFor="let Depth of Depths">
+            {{Depth}}
+        </option>
+    </select></td>
+    <td>  <select class="custom-select dropdown-style" [(ngModel)]="SelectedSoilWateratfieldCapacity3" style="width: 120px;" >
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let SoilWateratfieldCapacity of SoilWateratfieldCapacitys" [value]="SoilWateratfieldCapacity.value">
+            {{SoilWateratfieldCapacity.label}}
+        </option>
+    </select></td>
+    <td>  <select class="custom-select dropdown-style" [(ngModel)]="SelectedPermentWiltingPoint3" style="width: 120px;">
+        <option value=null [disabled]=true>  Select </option>
+        <option *ngFor="let PermentWiltingPoint of PermentWiltingPoints" [value]="PermentWiltingPoint.value">
+            {{PermentWiltingPoint.label}}
+        </option>
+    </select></td>
+    <td> <select class="custom-select dropdown-style"  [(ngModel)]="SelectedInitialSoilwaterDeficit3" style="width: 180px;">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let InitialSoilwaterDeficit of InitialSoilwaterDeficits">
+            {{InitialSoilwaterDeficit}}
+        </option>
+    </select></td>
+</tr>
+<tr *ngIf="LayerUpdate >= 4">
+    <td>4</td>
+    <td>  <select class="custom-select dropdown-style" [(ngModel)]="SelectedSoilType4" style="width: 120px;" (change)="soilType4(SelectedSoilType4)">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let SoilType of SoilTypes" [value]="SoilType.value">
+            {{SoilType.label}}
+        </option></select></td>
+        <td>  <select class="custom-select dropdown-style" [(ngModel)]="SelectedDepth4" style="width: 120px;">
+        <option value=null [disabled]="true">Select</option>
+        <option *ngFor="let Depth of Depths">
+            {{Depth}}
+        </option>
+    </select></td>
+    <td> <select class="custom-select dropdown-style" [(ngModel)]="SelectedSoilWateratfieldCapacity4" style="width: 120px;">
+        <option value=null [disabled]=true>  Select </option>
+        <option *ngFor="let SoilWateratfieldCapacity of SoilWateratfieldCapacitys" [value]="SoilWateratfieldCapacity.value">
+            {{SoilWateratfieldCapacity.label}}
+        </option>
+    </select></td>
+    <td>  <select class="custom-select dropdown-style" [(ngModel)]="SelectedPermentWiltingPoint4" style="width: 120px;">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let PermentWiltingPoint of PermentWiltingPoints" [value]="PermentWiltingPoint.value">
+            {{PermentWiltingPoint.label}}
+        </option>
+    </select></td>
+    <td> <select class="custom-select dropdown-style"  [(ngModel)]="SelectedInitialSoilwaterDeficit4" style="width: 180px;">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let InitialSoilwaterDeficit of InitialSoilwaterDeficits">
+            {{InitialSoilwaterDeficit}}
+        </option>
+    </select></td>
+</tr>
+<tr *ngIf="LayerUpdate >= 5">
+    <td>5</td>
+    <td><select class="custom-select dropdown-style" [(ngModel)]="SelectedSoilType5" style="width: 120px;" (change)="soilType5(SelectedSoilType5)">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let SoilType of SoilTypes" [value]="SoilType.value">
+            {{SoilType.label}}
+        </option></select></td>
+        <td> <select class="custom-select dropdown-style" [(ngModel)]="SelectedDepth5" style="width: 120px;">
+        <option value=null [disabled]="true">Select</option>
+        <option *ngFor="let Depth of Depths">
+            {{Depth}}
+        </option>
+    </select></td>
+    <td>  <select class="custom-select dropdown-style" [(ngModel)]="SelectedSoilWateratfieldCapacity5" style="width: 120px;">
+        <option value=null [disabled]=true>  Select </option>
+        <option *ngFor="let SoilWateratfieldCapacity of SoilWateratfieldCapacitys" [value]="SoilWateratfieldCapacity.value">
+            {{SoilWateratfieldCapacity.label}}
+        </option>
+    </select></td>
+    <td> <select class="custom-select dropdown-style" [(ngModel)]="SelectedPermentWiltingPoint5" style="width: 120px;">
+        <option value=null [disabled]=true>  Select </option>
+        <option *ngFor="let PermentWiltingPoint of PermentWiltingPoints" [value]="PermentWiltingPoint.value">
+            {{PermentWiltingPoint.label}}
+        </option>
+    </select></td>
+    <td>  <select class="custom-select dropdown-style"  [(ngModel)]="SelectedInitialSoilwaterDeficit5" style="width: 180px;">
+        <option value=null [disabled]=true>Select </option>
+        <option *ngFor="let InitialSoilwaterDeficit of InitialSoilwaterDeficits">
+            {{InitialSoilwaterDeficit}}
+        </option>
+    </select></td>
+</tr>
+<tr *ngIf="LayerUpdate == 6">
+    <td>6</td>
+    <td> <select class="custom-select dropdown-style" [(ngModel)]="SelectedSoilType6" style="width: 120px;" (change)="soilType6(SelectedSoilType6)">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let SoilType of SoilTypes" [value]="SoilType.value">
+            {{SoilType.label}}
+        </option></select></td>
+        <td> <select class="custom-select dropdown-style" [(ngModel)]="SelectedDepth6" style="width: 120px;">
+        <option value=null [disabled]="true"> Select</option>
+        <option *ngFor="let Depth of Depths">
+            {{Depth}}
+        </option>
+    </select></td>
+    <td> <select class="custom-select dropdown-style" [(ngModel)]="SelectedSoilWateratfieldCapacity6" style="width: 120px;">
+        <option value=null [disabled]=true>Select </option>
+        <option *ngFor="let SoilWateratfieldCapacity of SoilWateratfieldCapacitys" [value]="SoilWateratfieldCapacity.value">
+            {{SoilWateratfieldCapacity.label}}
+        </option>
+    </select></td>
+    <td> <select class="custom-select dropdown-style" [(ngModel)]="SelectedPermentWiltingPoint6" style="width: 120px;">
+        <option value=null [disabled]=true>  Select </option>
+        <option *ngFor="let PermentWiltingPoint of PermentWiltingPoints" [value]="PermentWiltingPoint.value">
+            {{PermentWiltingPoint.label}}
+        </option>
+    </select></td>
+    <td>  <select class="custom-select dropdown-style"  [(ngModel)]="SelectedInitialSoilwaterDeficit6" style="width: 180px;">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let InitialSoilwaterDeficit of InitialSoilwaterDeficits">
+            {{InitialSoilwaterDeficit}}
+        </option>
+    </select></td>
+</tr></table>
+</div><br *ngIf="LayerUpdate == 1 || LayerUpdate == 2 || LayerUpdate == 3 || LayerUpdate == 4 || LayerUpdate == 5 || LayerUpdate == 6">
+<div>
+    <font [size]="3"> <b>Select No of MADs :</b></font>
+    <select class="custom-select dropdown-style" [(ngModel)]="SelectedMADs" (change)="MADValue()">
+        <option value=null [disabled]=true> Select</option>
+        <option *ngFor="let MADs of NoOfMADs" >
+            {{MADs}}
+        </option>
+    </select> 
+    <button mat-button (click)="openDialog('MAD')"><mat-icon>help</mat-icon></button>
+</div><br>
+
+<div *ngIf="(SelectedMADs > 1 || SelectedMADs ==1)"><font [size]="3"> <b>Select MADs and Dates:</b></font></div>
+   
+<div>
+    <table>
+        <th *ngIf="(SelectedMADs > 1 || SelectedMADs == 1)">MAD1</th>
+        <th *ngIf="(SelectedMADs > 2 || SelectedMADs == 2)">MAD2</th>
+        <th *ngIf="(SelectedMADs > 3 || SelectedMADs == 3)">MAD3</th>
+        <th *ngIf="(SelectedMADs > 4 || SelectedMADs == 4)">MAD4</th>
+        <tr><td *ngIf="(SelectedMADs > 1 || SelectedMADs == 1)"><select class="custom-select dropdown-style " [(ngModel)]="SelectedMAD1" style="width: 190px;">
+            <option value=null [disabled]=true> Select</option>
+            <option *ngFor="let MAD1 of MADs" [value]="MAD1.value">
+                {{MAD1.label}}
+            </option>
+        </select></td>
+    <td *ngIf="(SelectedMADs > 2 || SelectedMADs == 2)"><select class="custom-select dropdown-style" [(ngModel)]="SelectedMAD2" style="width: 190px;">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let MAD2 of MADs" [value]="MAD2.value">
+            {{MAD2.label}}
+        </option>
+    </select></td>
+<td *ngIf="(SelectedMADs > 3 || SelectedMADs == 3)"><select class="custom-select dropdown-style" [(ngModel)]="SelectedMAD3" style="width: 190px;">
+    <option value=null [disabled]=true> Select </option>
+    <option *ngFor="let MAD3 of MADs" [value]="MAD3.value">
+        {{MAD3.label}}
+    </option>
+</select></td>
+<td *ngIf="(SelectedMADs > 4 || SelectedMADs == 4)"><select class="custom-select dropdown-style" [(ngModel)]="SelectedMAD4" style="width: 190px;">
+    <option value=null [disabled]=true> Select </option>
+    <option *ngFor="let MAD4 of MADs" [value]="MAD4.value">
+        {{MAD4.label}}
+    </option>
+</select></td></tr> 
+<tr><td>
+    <table *ngIf="(SelectedMADs > 1 || SelectedMADs ==1)">
+        <th>From</th>
+        <th>To</th>
+        <tr>
+            <td><input class="dropdown-style" type="date" [(ngModel)]="MAD1From"  style="width:89px;" [min]="getCurrentDate()">
+            </td>
+            <td><input class="dropdown-style" type="date" [(ngModel)]="MAD1To" style="width:89px;" (change)="calculateDays1(MAD1From , MAD1To)" [min]="getCurrentDate()">
+            </td>
+        </tr>
+    </table></td>
+    <td>
+    <table *ngIf="(SelectedMADs > 2 || SelectedMADs == 2)">
+        <th>From</th>
+        <th>To</th>
+        <tr>
+            <td>
+                <input class="dropdown-style" type="date" [(ngModel)]="MAD2From" style="width:89px;" [min]="getCurrentDate()">
+            </td>
+            <td>
+                <input class="dropdown-style" type="date" [(ngModel)]="MAD2To" style="width:89px;" (change)="calculateDays2(MAD2From , MAD2To)" [min]="getCurrentDate()">
+            </td>
+        </tr>
+    </table></td>
+    <td>
+    <table *ngIf="(SelectedMADs > 3 || SelectedMADs == 3)">
+        <th>From</th>
+        <th>To</th>
+        <tr>
+            <td>
+                <input class="dropdown-style" type="date" [(ngModel)]="MAD3From" style="width:89px;" [min]="getCurrentDate()">
+            </td>
+            <td>
+                <input class="dropdown-style" type="date" [(ngModel)]="MAD3To" style="width:89px;" (change)="calculateDays3(MAD3From , MAD3To)" [min]="getCurrentDate()">
+            </td>
+        </tr>
+    </table></td>
+    <td>
+    <table *ngIf="(SelectedMADs > 4 || SelectedMADs == 4)">
+        <th>From</th>
+        <th>To</th>
+        <tr>
+            <td>
+                <input class="dropdown-style" type="date" [(ngModel)]="MAD4From" style="width:89px;" [min]="getCurrentDate()">
+            </td>
+            <td>
+                <input class="dropdown-style" type="date" [(ngModel)]="MAD4To" style="width:89px;" (change)="calculateDays4(MAD4From , MAD4To)" [min]="getCurrentDate()">
+            </td>
+        </tr>
+    </table></td>
+</tr>
+<tr>
+    <td *ngIf="(SelectedMADs > 1 || SelectedMADs == 1)"><b class="dropdown-style" style="margin-left: 40px;" >Duration {{result1}} days</b></td>
+    <td *ngIf="(SelectedMADs > 2 || SelectedMADs == 2)"><b class="dropdown-style" style="margin-left: 40px;" >Duration {{result2}} days</b></td>
+    <td *ngIf="(SelectedMADs > 3 || SelectedMADs == 3)"><b class="dropdown-style" style="margin-left: 40px;" >Duration {{result3}} days</b></td>
+    <td *ngIf="(SelectedMADs > 4 || SelectedMADs == 4)"><b class="dropdown-style" style="margin-left: 40px;" >Duration {{result4}} days</b></td>
+</tr>
+
+    </table>
+</div>
+
+
+
+
+<br *ngIf="(SelectedMADs > 1 || SelectedMADs ==1)">
+<!-- <br> -->
+<div>
+    <table>
+        <th>Irrigation System:</th>
+        <th>fraction of soil surface wetted by irrigation,fw</th>
+        <th>% of Soil Voluume Used to Store Water</th>
+        <th>Help</th>
+   <!-- <div> <font [size]="3"> <b>Irrigation System:</b></font></div> -->
+  <tr>  <td><select class="custom-select dropdown-style" [(ngModel)]="SelectedIrrigationSystem" (change)="IrrigationSystem(SelectedIrrigationSystem)" required #irrigationcontrol="ngModel">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let IrrigationSystem of IrrigationSystems" [value] = "IrrigationSystem.value">
+            {{IrrigationSystem.label}}
+        </option>
+    </select></td>
+   <td> <select class="custom-select dropdown-style" [(ngModel)]="SelectedIrrigationfw" style="width: 310px;">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let fw of fws">
+            {{fw}}
+        </option>
+    </select></td>
+    <td><select class="custom-select dropdown-style" [(ngModel)]="SelectedSoilVolume" style="width: 250px;" required #SelectedSoilVolumeControl="ngModel">
+        <option value=null [disabled]=true> Select </option>
+        <option *ngFor="let SoilVolume of SoilVolumes" [value]="SoilVolume.value">
+            {{SoilVolume.label}}
+        </option>
+    </select></td>
+    <td><button mat-button (click)="openDialog('Irrigation System')"><mat-icon>help</mat-icon></button></td>
+</tr><tr>
+    <td>
+        <div *ngIf="displayerrormsgs == 0"><h5>Please select irrigation system</h5></div>
+        <div *ngIf="irrigationcontrol.errors?.['required'] && displayerrormsgs == 1" class="error-message">Please select irrigation system</div>
+    </td>
+</tr>
+    </table>
+    <!-- <select class="custom-select dropdown-style" [(ngModel)]="SelectedEmitterflowrate">
+        <option value="" [disabled]=true> Emitter flow rate </option>
+        <option *ngFor="let Flowrate of Flowrates">
+            {{Flowrate}}
+        </option>
+    </select>
+    <select class="custom-select dropdown-style" [(ngModel)]="SelectedSpacingBetweenEmitters">
+        <option value="" [disabled]=true> Spacing between emitters(inches) </option>
+        <option *ngFor="let SpacingBetweenEmitter of SpacingBetweenEmitters">
+            {{SpacingBetweenEmitter}}
+        </option>
+    </select>
+    <select class="custom-select dropdown-style" [(ngModel)]="SelectedSpacingBetweenBeds">
+        <option value="" [disabled]=true> Spacing between beds(inches) </option>
+        <option *ngFor="let SpacingBetweenBed of SpacingBetweenBeds">
+            {{SpacingBetweenBed}}
+        </option>
+    </select>
+    <select class="custom-select dropdown-style" [(ngModel)]="SelectedTapesPerBed">
+        <option value="" [disabled]=true> Number of tapes per bed</option>
+        <option *ngFor="let NumberOfTapesPerBed of NumberOfTapesPerBeds">
+            {{NumberOfTapesPerBed}}
+        </option>
+    </select>
+    <select class="custom-select dropdown-style" [(ngModel)]="SelectedIrrigationEfficiency">
+        <option value="" [disabled]=true> Irrigation Efficiency </option>
+        <option *ngFor="let IrrigationEfficiency of IrrigationEfficiencys" [value]="IrrigationEfficiency.value">
+            {{IrrigationEfficiency.label}}
+        </option>
+    </select> -->
+    
+    
+</div><br>
+<button mat-button class="button-style"  (click)="editFields()">Edit field </button>
+</div>

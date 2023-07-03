@@ -1,0 +1,17 @@
+
+<h1 mat-dialog-title>help</h1>
+<div mat-dialog-content>
+    <img *ngIf="(selectedhelp == 'Vegetable and Field Crop')" [src] ="'../assets/images/Water_Irrigation.jpg'" 
+    style="width: 600px;height: 400px;">
+    <img *ngIf="(selectedhelp == 'Tree Crop')" [src] ="'../assets/images/Water_Irrigation.jpg'" 
+    style="width: 600px;height: 400px;">
+<p *ngIf="(selectedhelp == 'Vegetable and Field Crop')"> 'Vegetable and Field Crop'</p>
+<p *ngIf="(selectedhelp == 'Tree Crop')"> Tree Crop</p>
+<p *ngIf="(selectedhelp == 'Crop Data')"> Crop Data</p>
+<p *ngIf="(selectedhelp == 'Soil Water')"> Soil Water</p>
+<p *ngIf="(selectedhelp == 'Irrigation System')"> Irrigation System</p>
+<p *ngIf="(selectedhelp == 'Soil Type')"> Soil Type</p>
+<p *ngIf="(selectedhelp == 'MAD')"> MADs </p>
+<p *ngIf="(selectedhelp == 'plannedDate')">planned Date</p>
+
+</div>

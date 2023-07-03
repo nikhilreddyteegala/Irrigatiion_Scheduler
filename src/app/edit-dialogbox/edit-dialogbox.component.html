@@ -1,0 +1,69 @@
+
+<button mat-icon-button style="float: right;margin: 5px;" matDialogClose>
+    <mat-icon>close</mat-icon>
+    </button>
+    <h2 mat-dialog-title>Edit Options</h2>
+    <mat-dialog-content>
+        <p>
+            <mat-form-field>
+                <mat-label>Estimated Soil VWC%</mat-label>
+                <mat-select [(ngModel)]="selectedVWC">
+                    <mat-option *ngFor="let FGC of FGCs"  [value]="FGC.value">
+                         {{FGC.label}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </p><p>
+            <mat-form-field>
+                <mat-label>Irrigation Added</mat-label>
+                <mat-select [(ngModel)]="selectedIrr">
+                    <mat-option *ngFor="let FGC of FGCs"  [value]="FGC.value">
+                         {{FGC.label}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </p><p>
+            <mat-form-field>
+                <mat-label>Rain</mat-label>
+                <mat-select [(ngModel)]="selectedRain">
+                    <mat-option *ngFor="let FGC of FGCs"  [value]="FGC.value">
+                         {{FGC.label}}
+                    </mat-option>
+                </mat-select>
+                
+            </mat-form-field>
+        </p><p>
+            <mat-form-field>
+                <mat-label> Measured Crop Height</mat-label>
+                <mat-select [(ngModel)]="selectedCrHt">
+                    <mat-option *ngFor="let FGC of FGCs"  [value]="FGC.value">
+                         {{FGC.label}}
+                    </mat-option>
+                </mat-select>
+
+            </mat-form-field>
+        </p><p>
+            <mat-form-field>
+                <mat-label> Measured/Estimated Root Depth</mat-label>
+                <mat-select [(ngModel)]="selectedRtDp">
+                    <mat-option *ngFor="let FGC of FGCs"  [value]="FGC.value">
+                         {{FGC.label}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            </p>
+        <p>
+            <mat-form-field>
+                <mat-label>Percentage of Ground Coverages</mat-label>
+                <mat-select [(ngModel)]="selectedFGC">
+                    <mat-option *ngFor="let FGC of FGCs"  [value]="FGC.value">
+                         {{FGC.label}}
+                    </mat-option>
+                </mat-select> 
+            </mat-form-field> 
+        </p>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close color="warn">Cancel</button>
+        <button mat-button  cdkFocusInitial  mat-dialog-close color="primary" (click)="editoptions()">Save</button>
+    </mat-dialog-actions>

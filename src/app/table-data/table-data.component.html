@@ -1,0 +1,29 @@
+
+ <!-- <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
+      <th mat-header-cell *matHeaderCellDef>{{ column }}</th>
+      <td mat-cell *matCellDef="let emp">{{ emp[column] }}</td>
+    </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let emprow; columns: displayedColumns"></tr>
+   </table> -->
+{{selectedField}}
+
+  <table>
+    <th>name</th>
+    <th>Date</th>
+    <th>Actual Etc</th>
+    <th>Predicted Soil Water Deficit</th>
+    
+    <th>Edit</th>
+    <tr *ngFor= "let x of tableData">
+      <td>{{ x.name }}</td>
+      <td>{{ x.plantingDate | date:'MM/dd/yyyy' }}</td>
+      <td>{{x.crop}}</td>
+      <td>{{x.soilInitWatDeficit}}</td>
+      <td><button (click)="openDialog(x)"> Edit </button></td>
+       
+    </tr>
+  </table> 
+

@@ -1,0 +1,22 @@
+$custom-accent-color: #e67e22;
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .login-container {
+    
+     background-color: #9cb4f5;
+  }
+  .rightspace {
+    margin-right: 20px;
+
+  }
+
+  .mat-raised-button.custom-accent {
+    background-color: $custom-accent-color;
+    color: #fff;
+  }
+

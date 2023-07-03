@@ -1,0 +1,36 @@
+
+
+
+Fields:
+<select class="custom-select dropdown-style" [(ngModel)]="selectedField" (change)="fieldClick(selectedField)">
+    <option  [disabled]=true>---Select--- </option>
+    <option> Select Fields </option>
+    <option *ngFor="let field of fields">
+        {{field.name}},
+        {{field.plantingDate}},
+        {{field.crop}}
+    </option>
+</select><br><br>
+
+
+<button mat-button class="button-style" (click)="displayfieldData()"> Daily budget </button> 
+<button mat-button class="button-style" (click)="displaygraphsdata()"> Graphs </button>  
+<!-- <button class="button-style"> fields </button>  -->
+
+
+<button mat-button class="button-style" (click)="openDialog()"> Delete Field </button>
+<button mat-button class="button-style"  (click)="displayaddfield()"> Add Field </button>
+<button mat-button class="button-style"  (click)="displayeditfield()">Edit Field </button>
+<button mat-button (click)="displayaccount()"><mat-icon matSuffix>account_circle</mat-icon>Account</button>
+<button mat-button (click)="signOut()"><mat-icon matSuffix>logout</mat-icon>LogOut</button>
+
+
+  
+<app-fields-component *ngIf="displayAddField === true"></app-fields-component>
+
+<app-table-data [selectedField]="selectedField" *ngIf="(selectedField !=  'Select Fields' && displayTableData === true)"></app-table-data>
+
+<app-graphs *ngIf="(selectedField != 'Select Fields' && displaygraphs === true)"></app-graphs>
+
+<app-account [details]="details" *ngIf="account === true"></app-account>
+<app-edit-fields [editfieldData]="editfieldsData" *ngIf="editField === true"></app-edit-fields>
